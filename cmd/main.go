@@ -1,19 +1,37 @@
 package main
 
 import (
-	"../pkg/api"
+	"../pkg/vkapi"
+	"../pkg/postgres"
+	"flag"
 	"fmt"
 	"log"
 	"time"
 	"os"
 )
 
+var (
+	user = flag.String("u", "postgres", "Postgres user")
+	password = flag.String("p", "password", "Postgres user password")
+	host = flag.String("h", "172.17.0.2", "Postgres host")
+	port = flag.String("P", "5432", "Postgres port")
+	dbName = flag.String("n", "vknews", "Postgres DB name")
+)
+
 func main() {
 	token := os.Getenv("VK_TOKEN")
-	session, err := api.NewVKApi(token)
+	session, err := vkapi.NewVKApi(token)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	conn, err := postgres.OpenConnection(*user, *password, *host, *port, *dbName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%#v\n", conn.Conn)
+	return
+
 	groupsDomains := []string{"meduzaproject", "ria", "kommersant_ru", "tj", "rbc"}
 	groupsWall, err := session.GetGroupsPosts(groupsDomains, 3)
 

@@ -1,4 +1,4 @@
-package api
+package vkapi
 
 type VKWall struct {
 	Count int64    `json:"count"`
