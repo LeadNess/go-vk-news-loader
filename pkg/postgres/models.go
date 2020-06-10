@@ -1,6 +1,8 @@
 package postgres
 
-import "time"
+import (
+	"time"
+)
 
 var schema = `
 CREATE TABLE groups (
@@ -22,7 +24,7 @@ CREATE TABLE groups (
 
 CREATE TABLE posts (
     post_id  INTEGER
-             PRIMARY KEY,
+             NOT NULL,
 
 	group_id INTEGER
              REFERENCES groups (group_id)
@@ -34,7 +36,8 @@ CREATE TABLE posts (
     title    TEXT
              NOT NULL,
 
-    text     TEXT,
+    text     TEXT
+			 NOT NULL,
 
     likes_count INTEGER
              NOT NULL
@@ -50,7 +53,9 @@ CREATE TABLE posts (
 
     reposts_count INTEGER
              NOT NULL
-             CHECK (reposts >= 0)
+             CHECK (reposts >= 0),
+
+	PRIMARY KEY (post_id, date)
 );`
 
 type Group struct {
