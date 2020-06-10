@@ -2,21 +2,19 @@ package main
 
 import (
 	"../pkg/vkapi"
-	"../pkg/postgres"
-	"flag"
 	"fmt"
 	"log"
 	"time"
 	"os"
 )
 
-var (
-	user = flag.String("u", "postgres", "Postgres user")
-	password = flag.String("p", "password", "Postgres user password")
-	host = flag.String("h", "172.17.0.2", "Postgres host")
-	port = flag.String("P", "5432", "Postgres port")
-	dbName = flag.String("n", "vknews", "Postgres DB name")
-)
+func init() {/*
+	pgUser := "postgres"
+	pgPassword := "password"
+	pgHost := "172.17.0.2"
+	pgPort := "5432"
+	pgDBName := "vknews"*/
+}
 
 func main() {
 	token := os.Getenv("VK_TOKEN")
@@ -25,13 +23,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conn, err := postgres.OpenConnection(*user, *password, *host, *port, *dbName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("%#v\n", conn)
-
 	groupsDomains := []string{"meduzaproject", "ria", "kommersant_ru", "tj", "rbc"}
+	groups, err := session.GetGroups(groupsDomains)
+	fmt.Printf("%v, %#v\n", err, groups)
+	return
 	groupsWall, err := session.GetGroupsPosts(groupsDomains, 3)
 
 	if err != nil {
@@ -45,7 +40,7 @@ func main() {
 					post.Attachments[0].Link.Description != "" {
 					fmt.Printf("Title: %s\n\nDescription: %s\n\nDate: %s\nLikes: %d\nViews: %d\nComments: %d\n\n\n",
 						post.Attachments[0].Link.Title, post.Attachments[0].Link.Description,
-						time.Unix(post.Date, 0), post.Likes.Count, post.Views.Count, post.Comments.Count)
+						time.Unix(int64(post.Date), 0), post.Likes.Count, post.Views.Count, post.Comments.Count)
 				}
 			}
 		}

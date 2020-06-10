@@ -9,7 +9,7 @@ CREATE TABLE groups (
 	group_id INTEGER 
              PRIMARY KEY,
 
-	domain   TEXT 
+	screen_name TEXT 
              UNIQUE 
              NOT NULL,
 
@@ -17,7 +17,7 @@ CREATE TABLE groups (
              UNIQUE
              NOT NULL,
 
-	followers_count INTEGER
+	members_count INTEGER
              NOT_NULL
              CHECK (followers_count >= 0)
 );
@@ -59,10 +59,10 @@ CREATE TABLE posts (
 );`
 
 type Group struct {
-	ID             int    `db:"group_id"`
-	Domain         string `db:"domain"`
-	Name           string `db:"name"`
-	FollowersCount int    `db:"followers_count"`
+	ID           int    `db:"group_id"`
+	ScreenName   string `db:"screen_name"`
+	Name         string `db:"name"`
+	MembersCount int    `db:"members_count"`
 }
 
 type Post struct {

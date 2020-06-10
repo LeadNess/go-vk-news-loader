@@ -2,10 +2,26 @@ package postgres
 
 import (
 	"fmt"
-	"github.com/jmoiron/sqlx"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
+
+type GroupsStorage interface {
+	InsertGroup(group Group) error
+	InsertGroups(groups []Group) error
+}
+
+type PostsStorage interface {
+	InsertPost(post Post) error
+	InsertPosts(post []Post) error
+}
+
+type NewsStorage interface {
+	GroupsStorage
+	PostsStorage
+	CreateSchema() error
+}
 
 type Storage struct {
 	 db *sqlx.DB

@@ -2,9 +2,15 @@ package vkapi
 
 import (
 	"fmt"
-	"github.com/go-vk-api/vk"
 	"strconv"
+
+	"github.com/go-vk-api/vk"
 )
+
+type VKLoader interface {
+	GetGroups(screenNames []string) ([]VKGroup, error)
+	GetGroupsPosts(domains []string, postsCount int) (map[string]VKWall, error)
+}
 
 type VKAPi struct {
 	api *vk.Client
@@ -19,21 +25,27 @@ func NewVKApi(token string) (*VKAPi, error) {
 	}, err
 }
 
-func (a *VKAPi) WallGet(domain string) (VKWall, error) {
-	var wall VKWall
-	err := a.api.CallMethod("wall.get", vk.RequestParams{
-		"domain": domain,
-		"count": 100,
-	}, &wall)
-	return wall, err
+func (a *VKAPi) GetGroups(groupsScreenNames []string) ([]VKGroup, error)  {
+	var groupIDs string
+	for i, group := range groupsScreenNames {
+		groupIDs += group
+		if i != len(groupsScreenNames) - 1 {
+			groupIDs += ","
+		}
+	}
+	var groups []VKGroup
+	err := a.api.CallMethod("groups.getById", vk.RequestParams{
+		"group_ids": groupIDs,
+		"fields": "description,activity,members_count",
+	}, &groups)
+	return groups, err
 }
 
-func (a *VKAPi) GetGroupsPosts(domains []string, postsCount int) (map[string]VKWall, error) {
-	groupsDomains := make([]string, len(domains))
-	for i, str := range domains {
-		groupsDomains[i] = fmt.Sprintf("%s", strconv.Quote(str))
-		if i != len(domains) - 1{
-			groupsDomains[i] += ","
+func (a *VKAPi) GetGroupsPosts(groupsScreenNames []string, postsCount int) (map[string]VKWall, error) {
+	for i, str := range groupsScreenNames {
+		groupsScreenNames[i] = fmt.Sprintf("%s", strconv.Quote(str))
+		if i != len(groupsScreenNames) - 1{
+			groupsScreenNames[i] += ","
 		}
 	}
 	var response []VKWall
@@ -48,11 +60,11 @@ func (a *VKAPi) GetGroupsPosts(domains []string, postsCount int) (map[string]VKW
 		}
 		return res;`
 	err := a.api.CallMethod("execute", vk.RequestParams{
-		"code": fmt.Sprintf(code, groupsDomains, postsCount),
+		"code": fmt.Sprintf(code, groupsScreenNames, postsCount),
 	}, &response)
-	wallMap := make(map[string]VKWall, len(domains))
+	wallMap := make(map[string]VKWall, len(groupsScreenNames))
 	for i, wall := range response {
-		wallMap[domains[i]] = wall
+		wallMap[groupsScreenNames[i]] = wall
 	}
 	return wallMap, err
 }
