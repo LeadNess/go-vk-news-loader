@@ -37,14 +37,16 @@ func (a *VKAPi) GetGroupsPosts(domains []string, postsCount int) (map[string]VKW
 		}
 	}
 	var response []VKWall
-	code := "var domains = %s;" +
-			"var res = [];" +
-			"var i = 0;" +
-			"while (i < domains.length) {" +
-				"var posts = API.wall.get({domain: domains[i], count: %d});" +
-				"res.push(posts);" +
-				"i = i + 1; }" +
-			"return res;"
+	code := `
+        var domains = %s;
+		var res = [];
+		var i = 0;
+		while (i < domains.length) {
+			var posts = API.wall.get({domain: domains[i], count: %d});
+			res.push(posts);
+			i = i + 1; 
+		}
+		return res;`
 	err := a.api.CallMethod("execute", vk.RequestParams{
 		"code": fmt.Sprintf(code, groupsDomains, postsCount),
 	}, &response)

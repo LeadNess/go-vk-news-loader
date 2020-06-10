@@ -30,7 +30,6 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Printf("%#v\n", conn.Conn)
-	return
 
 	groupsDomains := []string{"meduzaproject", "ria", "kommersant_ru", "tj", "rbc"}
 	groupsWall, err := session.GetGroupsPosts(groupsDomains, 3)

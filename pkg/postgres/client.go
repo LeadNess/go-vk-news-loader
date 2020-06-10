@@ -13,6 +13,10 @@ type Storage struct {
 
 func OpenConnection(user, password, host, port, dbName string) (*Storage, error) {
 	db, err := sql.Open("postgres",
-		fmt.Sprintf("%s:%s@%s:%s/%s", user, password, host, port, dbName))
+		fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbName))
+	if err != nil {
+		return nil, err
+	}
+	err = db.Ping()
 	return &Storage{Conn: db}, err
 }
