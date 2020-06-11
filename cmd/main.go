@@ -1,58 +1,44 @@
 package main
 
 import (
-	"../pkg/vkapi"
-	"fmt"
 	"log"
-	"time"
 	"os"
+
+	"../pkg/service"
 )
 
 var (
-	VKToken    string
-	/*pgUser     string
+	vkToken    string
+	pgUser     string
 	pgPassword string
 	pgHost     string
 	pgPort     string
-	pgDBName   string*/
+	pgDBName   string
 )
 
 func init() {
-	VKToken = os.Getenv("VK_TOKEN")
-	/*
-	pgUser := "postgres"
-	pgPassword := "password"
-	pgHost := "172.17.0.2"
-	pgPort := "5432"
-	pgDBName := "vknews"*/
+	vkToken = os.Getenv("VK_TOKEN")
+	pgUser     = os.Getenv("PG_USER")
+	pgPassword = os.Getenv("PG_PASSWORD")
+	pgHost     = os.Getenv("PG_HOST")
+	pgPort     = os.Getenv("PG_PORT")
+	pgDBName   = os.Getenv("PG_DBNAME")
 }
 
 func main() {
-	session, err := vkapi.NewVKApi(VKToken)
+	service, err := service.NewNewsService(
+		vkToken, pgUser, pgPassword, pgHost, pgPort, pgDBName)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	groupsDomains := []string{"meduzaproject", "ria", "kommersant_ru", "tj", "rbc"}
-	groups, err := session.GetGroups(groupsDomains)
-	fmt.Printf("%v, %#v\n", err, groups)
-	return
-	groupsWall, err := session.GetGroupsPosts(groupsDomains, 3)
-
-	if err != nil {
+	groupsScreenNames := []string{"meduzaproject", "ria", "kommersant_ru", "tj", "rbc"}
+	if err := service.InitDB(); err != nil {
 		log.Fatal(err)
-	} else {
-		for domain, wall := range groupsWall {
-			fmt.Printf("Group: %s\n\n", domain)
-			for _, post := range wall.Items {
-				if len(post.Attachments) != 0 &&
-					post.Attachments[0].Link.Title != "" &&
-					post.Attachments[0].Link.Description != "" {
-					fmt.Printf("Title: %s\n\nDescription: %s\n\nDate: %s\nLikes: %d\nViews: %d\nComments: %d\n\n\n",
-						post.Attachments[0].Link.Title, post.Attachments[0].Link.Description,
-						time.Unix(int64(post.Date), 0), post.Likes.Count, post.Views.Count, post.Comments.Count)
-				}
-			}
-		}
+	}
+	if err := service.AddNewsSources(groupsScreenNames); err != nil {
+		log.Fatal(err)
+	}
+	if err := service.LoadNews(groupsScreenNames, 100); err != nil {
+		log.Fatal(err)
 	}
 }

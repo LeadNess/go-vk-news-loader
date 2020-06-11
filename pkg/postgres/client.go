@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -48,10 +47,10 @@ func (s *Storage) CreateSchema() error {
 func (s *Storage) InsertGroup(group Group) error {
 	sql := `
 		INSERT INTO 
-			groups (group_id, domain, name, followers_count) 
+			groups (group_id, screen_name, name, members_count) 
 		VALUES 
-			(:group_id, :domain, :name, :followers_count)`
-	res := s.db.MustExec(sql, group)
+			(:group_id, :screen_name, :name, :members_count)`
+	res := s.db.MustExec(sql, &group)
 	_, err := res.RowsAffected()
 	return err
 }
@@ -68,10 +67,10 @@ func (s *Storage) InsertGroups(groups []Group) error {
 func (s *Storage) InsertPost(post Post) error {
 	sql := `
 		INSERT INTO 
-			posts (post_id, group_id, date, title, text, likes_count, views_count, comments_count, reposts_count) 
+			posts (post_id, group_screen_name, date, title, text, likes_count, views_count, comments_count, reposts_count) 
 		VALUES 
-			(:post_id, :group_id, :date, :title, :text, :likes_count, :views_count, :comments_count, :reposts_count)`
-	res := s.db.MustExec(sql, post)
+			(:post_id, :group_screen_name, :date, :title, :text, :likes_count, :views_count, :comments_count, :reposts_count)`
+	res := s.db.MustExec(sql, &post)
 	_, err := res.RowsAffected()
 	return err
 }

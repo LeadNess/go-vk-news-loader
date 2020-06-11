@@ -3,6 +3,7 @@ package service
 import (
 	pg "../postgres"
 	vk "../vkapi"
+	"database/sql"
 	"time"
 )
 
@@ -21,16 +22,21 @@ func ParseVKWall(vkWall vk.VKWall, groupScreenName string) []pg.Post {
 		if len(post.Attachments) != 0 &&
 			post.Attachments[0].Link.Title != "" &&
 			post.Attachments[0].Link.Description != "" {
+			group := sql.NullString{
+				String: groupScreenName,
+				Valid:  true,
+			}
 			post := pg.Post{
-				ID:            post.ID,
-				Group:         groupScreenName,
-				Date:          time.Unix(int64(post.Date), 0),
-				Title:         post.Attachments[0].Link.Title,
-				Text:          post.Attachments[0].Link.Description,
-				LikesCount:    post.Likes.Count,
-				ViewsCount:    post.Views.Count,
-				CommentsCount: post.Comments.Count,
-				RepostsCount:  post.Reposts.Count,
+				ID:              post.ID,
+				GroupScreenName: group,
+				Date:            time.Unix(int64(post.Date), 0),
+				Title:           post.Attachments[0].Link.Title,
+				Text:            post.Attachments[0].Link.Description,
+				LikesCount:      post.Likes.Count,
+				ViewsCount:      post.Views.Count,
+				CommentsCount:   post.Comments.Count,
+				RepostsCount:    post.Reposts.Count,
+
 			}
 			posts = append(posts, post)
 		}

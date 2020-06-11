@@ -1,9 +1,9 @@
 package service
 
 import (
-	"fmt"
-	"github.com/pkg/errors"
 	"time"
+
+	"github.com/pkg/errors"
 
 	pg "../postgres"
 	vk "../vkapi"
@@ -24,7 +24,7 @@ type NewsService struct {
 	latestPosts map[string]pg.Post
 }
 
-func NewNewsLoaderService(vkToken, pgUser, pgPass, pgHost, pgPort, pgDBName string) (*NewsService, error) {
+func NewNewsService(vkToken, pgUser, pgPass, pgHost, pgPort, pgDBName string) (*NewsService, error) {
 	db, err := pg.OpenConnection(pgUser, pgPass, pgHost, pgPort, pgDBName)
 	if err != nil {
 		return nil, err
@@ -37,6 +37,10 @@ func NewNewsLoaderService(vkToken, pgUser, pgPass, pgHost, pgPort, pgDBName stri
 		db:    db,
 		vkApi: api,
 	}, err
+}
+
+func (s *NewsService) InitDB() error {
+	return s.db.CreateSchema()
 }
 
 func (s *NewsService) AddNewsSource(groupScreenName string) error {
