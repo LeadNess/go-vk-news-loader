@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"../pkg/service"
 )
@@ -31,5 +32,12 @@ func main() {
 	}
 	if err := newsService.LoadNews(groupsScreenNames, 100); err != nil {
 		log.Fatal(err)
+	}
+	for range time.Tick(time.Minute * 10) {
+		if err := newsService.LoadNews(groupsScreenNames, 10); err != nil {
+			log.Println(err)
+		} else {
+			log.Printf("loaded some staff")
+		}
 	}
 }
