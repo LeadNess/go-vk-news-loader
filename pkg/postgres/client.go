@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -28,8 +29,9 @@ type Storage struct {
 }
 
 func OpenConnection(user, password, host, port, dbName string) (*Storage, error) {
-	db, err := sqlx.Open("postgres",
-		fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbName))
+	conStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		user, password, host, port, dbName)
+	db, err := sqlx.Open("postgres", conStr)
 	if err != nil {
 		return nil, err
 	}

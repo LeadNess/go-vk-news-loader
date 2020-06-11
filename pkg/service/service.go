@@ -2,10 +2,15 @@ package service
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"time"
 
 	pg "../postgres"
 	vk "../vkapi"
+)
+
+var (
+	IncorrectScreenName = errors.New("incorrect group screen name")
 )
 
 type NewsLoader interface {
@@ -14,9 +19,9 @@ type NewsLoader interface {
 
 type NewsService struct {
 	db          *pg.Storage
-	api         *vk.VKAPi
+	vkApi       *vk.VKAPi
 	lastUpdate  time.Time
-	loadedPosts []vk.VKPost
+	latestPosts map[string]pg.Post
 }
 
 func NewNewsLoaderService(vkToken, pgUser, pgPass, pgHost, pgPort, pgDBName string) (*NewsService, error) {
@@ -29,30 +34,56 @@ func NewNewsLoaderService(vkToken, pgUser, pgPass, pgHost, pgPort, pgDBName stri
 		return nil, err
 	}
 	return &NewsService{
-		db:  db,
-		api: api,
+		db:    db,
+		vkApi: api,
 	}, err
 }
 
 func (s *NewsService) AddNewsSource(groupScreenName string) error {
-	s.db.InsertGroup()
+	vkGroups, err := s.vkApi.GetGroups([]string{groupScreenName})
+	if err != nil {
+		return err
+	} else if len(vkGroups) == 0 {
+		return IncorrectScreenName
+	}
+	group := ParseVKGroup(vkGroups[0])
+	return s.db.InsertGroup(group)
+}
+
+func (s *NewsService) AddNewsSources(groupsScreenNames []string) error {
+	vkGroups, err := s.vkApi.GetGroups(groupsScreenNames)
+	if err != nil {
+		return err
+	} else if len(vkGroups) == 0 {
+		return IncorrectScreenName
+	}
+	groups := make([]pg.Group, len(vkGroups))
+	for i, vkGroup := range vkGroups {
+		groups[i] = ParseVKGroup(vkGroup)
+	}
+	return s.db.InsertGroups(groups)
 }
 
 func (s *NewsService) LoadNews(groupsDomains []string, count int) error {
-	mapNews, err := s.api.GetGroupsPosts(groupsDomains, count)
+	mapNews, err := s.vkApi.GetGroupsPosts(groupsDomains, count)
 	if err != nil {
 		return err
 	}
-	for domain, wall := range mapNews {
-		fmt.Printf("Group: %s\n\n", domain)
-		for _, post := range wall.Items {
-			if len(post.Attachments) != 0 &&
-				post.Attachments[0].Link.Title != "" &&
-				post.Attachments[0].Link.Description != "" {
-				fmt.Printf("Title: %s\n\nDescription: %s\n\nDate: %s\nLikes: %d\nViews: %d\nComments: %d\n\n\n",
-					post.Attachments[0].Link.Title, post.Attachments[0].Link.Description,
-					time.Unix(post.Date, 0), post.Likes.Count, post.Views.Count, post.Comments.Count)
+	for group, wall := range mapNews {
+		posts := ParseVKWall(wall, group)
+		if _, ok := s.latestPosts[group]; ok {
+			latestPost := s.latestPosts[group]
+			for i, post := range posts {
+				if post.ID == latestPost.ID {
+					posts = posts[:i]
+					break
+				}
 			}
 		}
+		s.latestPosts[group] = posts[0]
+		if err := s.db.InsertPosts(posts); err != nil {
+			return err
+		}
 	}
+	return err
 }

@@ -8,7 +8,18 @@ import (
 	"os"
 )
 
-func init() {/*
+var (
+	VKToken    string
+	/*pgUser     string
+	pgPassword string
+	pgHost     string
+	pgPort     string
+	pgDBName   string*/
+)
+
+func init() {
+	VKToken = os.Getenv("VK_TOKEN")
+	/*
 	pgUser := "postgres"
 	pgPassword := "password"
 	pgHost := "172.17.0.2"
@@ -17,8 +28,7 @@ func init() {/*
 }
 
 func main() {
-	token := os.Getenv("VK_TOKEN")
-	session, err := vkapi.NewVKApi(token)
+	session, err := vkapi.NewVKApi(VKToken)
 	if err != nil {
 		log.Fatal(err)
 	}

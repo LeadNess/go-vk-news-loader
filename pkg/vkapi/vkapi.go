@@ -54,7 +54,11 @@ func (a *VKAPi) GetGroupsPosts(groupsScreenNames []string, postsCount int) (map[
 		var res = [];
 		var i = 0;
 		while (i < domains.length) {
-			var posts = API.wall.get({domain: domains[i], count: %d});
+			var posts = API.wall.get({
+				domain: domains[i], 
+				count: %d,
+				offset: 1
+			});
 			res.push(posts);
 			i = i + 1; 
 		}

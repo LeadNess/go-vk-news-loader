@@ -26,8 +26,8 @@ CREATE TABLE posts (
     post_id  INTEGER
              NOT NULL,
 
-	group_id INTEGER
-             REFERENCES groups (group_id)
+	group    TEXT
+             REFERENCES groups (screen_name)
              ON DELETE SET NULL,
 
     date     TIMESTAMP
@@ -67,7 +67,7 @@ type Group struct {
 
 type Post struct {
 	ID            int       `db:"post_id"`
-	GroupID       int       `db:"group_id"`
+	Group         string    `db:"group"`
 	Date          time.Time `db:"date"`
 	Title         string    `db:"title"`
 	Text          string    `db:"text"`
