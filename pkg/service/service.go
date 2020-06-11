@@ -34,8 +34,9 @@ func NewNewsService(vkToken, pgUser, pgPass, pgHost, pgPort, pgDBName string) (*
 		return nil, err
 	}
 	return &NewsService{
-		db:    db,
-		vkApi: api,
+		db:          db,
+		vkApi:       api,
+		latestPosts: make(map[string]pg.Post),
 	}, err
 }
 

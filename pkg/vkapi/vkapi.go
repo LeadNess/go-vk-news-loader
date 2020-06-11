@@ -42,10 +42,11 @@ func (a *VKAPi) GetGroups(groupsScreenNames []string) ([]VKGroup, error)  {
 }
 
 func (a *VKAPi) GetGroupsPosts(groupsScreenNames []string, postsCount int) (map[string]VKWall, error) {
+	groups := make([]string, len(groupsScreenNames))
 	for i, str := range groupsScreenNames {
-		groupsScreenNames[i] = fmt.Sprintf("%s", strconv.Quote(str))
-		if i != len(groupsScreenNames) - 1{
-			groupsScreenNames[i] += ","
+		groups[i] = fmt.Sprintf("%s", strconv.Quote(str))
+		if i != len(groups) - 1{
+			groups[i] += ","
 		}
 	}
 	var response []VKWall
@@ -64,9 +65,9 @@ func (a *VKAPi) GetGroupsPosts(groupsScreenNames []string, postsCount int) (map[
 		}
 		return res;`
 	err := a.api.CallMethod("execute", vk.RequestParams{
-		"code": fmt.Sprintf(code, groupsScreenNames, postsCount),
+		"code": fmt.Sprintf(code, groups, postsCount),
 	}, &response)
-	wallMap := make(map[string]VKWall, len(groupsScreenNames))
+	wallMap := make(map[string]VKWall, len(groups))
 	for i, wall := range response {
 		wallMap[groupsScreenNames[i]] = wall
 	}

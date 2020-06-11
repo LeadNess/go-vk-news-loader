@@ -39,7 +39,7 @@ func OpenConnection(user, password, host, port, dbName string) (*Storage, error)
 }
 
 func (s *Storage) CreateSchema() error {
-	res := s.db.MustExec(schema)
+	res := s.db.MustExec(dbSchema)
 	_, err := res.RowsAffected()
 	return err
 }
@@ -50,8 +50,7 @@ func (s *Storage) InsertGroup(group Group) error {
 			groups (group_id, screen_name, name, members_count) 
 		VALUES 
 			(:group_id, :screen_name, :name, :members_count)`
-	res := s.db.MustExec(sql, &group)
-	_, err := res.RowsAffected()
+	_, err := s.db.NamedExec(sql, &group)
 	return err
 }
 
@@ -70,8 +69,7 @@ func (s *Storage) InsertPost(post Post) error {
 			posts (post_id, group_screen_name, date, title, text, likes_count, views_count, comments_count, reposts_count) 
 		VALUES 
 			(:post_id, :group_screen_name, :date, :title, :text, :likes_count, :views_count, :comments_count, :reposts_count)`
-	res := s.db.MustExec(sql, &post)
-	_, err := res.RowsAffected()
+	_, err := s.db.NamedExec(sql, &post)
 	return err
 }
 

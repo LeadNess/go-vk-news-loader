@@ -1,10 +1,12 @@
 package service
 
 import (
+	"time"
+
+	"database/sql"
+
 	pg "../postgres"
 	vk "../vkapi"
-	"database/sql"
-	"time"
 )
 
 func ParseVKGroup(vkGroup vk.VKGroup) pg.Group {

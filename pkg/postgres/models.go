@@ -6,7 +6,7 @@ import (
 	"database/sql"
 )
 
-var schema = `
+const dbSchema = `
 CREATE TABLE groups (
 	group_id INTEGER 
              PRIMARY KEY,
@@ -28,9 +28,7 @@ CREATE TABLE posts (
     post_id  INTEGER
              NOT NULL,
 
-	group_screen_name TEXT
-             REFERENCES groups (screen_name)
-             ON DELETE SET NULL,
+	group_screen_name TEXT,
 
     date     TIMESTAMP
              NOT NULL,
@@ -57,7 +55,12 @@ CREATE TABLE posts (
              NOT NULL
              CHECK (reposts_count >= 0),
 
-	PRIMARY KEY (post_id, date)
+	PRIMARY KEY (post_id, date),
+
+	CONSTRAINT fk_group FOREIGN KEY (group_screen_name) 
+		REFERENCES groups (screen_name)
+			ON DELETE SET NULL
+			ON UPDATE CASCADE
 );`
 
 type Group struct {
