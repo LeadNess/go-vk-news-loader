@@ -22,7 +22,7 @@ func main() {
 		cfg.VKToken, cfg.PGUser, cfg.PGPass, cfg.PGHost, cfg.PGPort, cfg.PGName)
 	if err != nil {
 		log.Fatal(err)
-	}/*
+	}
 
 	groupsScreenNames,err := service.GetGroupsScreenNames(groupsPath)
 	if err != nil {
@@ -33,7 +33,7 @@ func main() {
 	}
 	if err := newsService.AddNewsSources(groupsScreenNames); err != nil {
 		log.Fatal(err)
-	}*/
+	}
 	for {
 		if err := newsService.LoadNews(100); err != nil {
 			log.Println(err)
