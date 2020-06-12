@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/pkg/errors"
+	"log"
 
 	pg "../postgres"
 	vk "../vkapi"
@@ -87,14 +88,18 @@ func (s *NewsService) LoadNews(count int) error {
 					break
 				}
 			}
+		} else {
+			newPosts = posts
 		}
 		s.latestPosts[group] = posts[0]
 		if err := s.db.InsertPosts(newPosts); err != nil {
 			return err
 		}
+		log.Printf("%s: load %d new posts\n", group, len(newPosts))
 		if err := s.db.UpdatePosts(updatedPosts); err != nil {
 			return err
 		}
+		log.Printf("%s: update %d posts\n", group, len(updatedPosts))
 	}
 	return err
 }
