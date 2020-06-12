@@ -10,6 +10,7 @@ import (
 type GroupsStorage interface {
 	InsertGroup(group Group) error
 	InsertGroups(groups []Group) error
+	GetGroupsScreenNames () ([]string, error)
 }
 
 type PostsStorage interface {
@@ -63,6 +64,12 @@ func (s *Storage) InsertGroups(groups []Group) error {
 		}
 	}
 	return nil
+}
+
+func (s *Storage) GetGroupsScreenNames() ([]string, error) {
+	var groups []string
+	err := s.db.Select(&groups, "SELECT screen_name FROM groups")
+	return groups, err
 }
 
 func (s *Storage) InsertPost(post Post) error {

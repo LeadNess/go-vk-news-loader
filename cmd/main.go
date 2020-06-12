@@ -1,11 +1,12 @@
 package main
 
 import (
-	"../pkg/service"
 	"log"
 	"os"
 	"strconv"
 	"time"
+
+	"../pkg/service"
 )
 
 var (
@@ -35,11 +36,11 @@ func main() {
 	if err := newsService.AddNewsSources(groupsScreenNames); err != nil {
 		log.Fatal(err)
 	}
-	if err := newsService.LoadNews(groupsScreenNames, 100); err != nil {
+	if err := newsService.LoadNews(100); err != nil {
 		log.Fatal(err)
 	}
 	for {
-		if err := newsService.LoadNews(groupsScreenNames, 10); err != nil {
+		if err := newsService.LoadNews(100); err != nil {
 			log.Println(err)
 		} else {
 			log.Printf("loaded some staff")

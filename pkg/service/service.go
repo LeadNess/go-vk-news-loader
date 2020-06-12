@@ -12,7 +12,7 @@ var (
 )
 
 type NewsLoader interface {
-	LoadNews(groupsDomains []string, count int) error
+	LoadNews(count int) error
 }
 
 type NewsService struct {
@@ -66,12 +66,16 @@ func (s *NewsService) AddNewsSources(groupsScreenNames []string) error {
 	return s.db.InsertGroups(groups)
 }
 
-func (s *NewsService) LoadNews(groupsDomains []string, count int) error {
-	mapNews, err := s.vkApi.GetGroupsPosts(groupsDomains, count)
-	var updatedPosts []pg.Post
+func (s *NewsService) LoadNews(count int) error {
+	groupsScreenNames, err := s.db.GetGroupsScreenNames()
 	if err != nil {
 		return err
 	}
+	mapNews, err := s.vkApi.GetGroupsPosts(groupsScreenNames, count)
+	if err != nil {
+		return err
+	}
+	var updatedPosts []pg.Post
 	for group, wall := range mapNews {
 		posts := ParseVKWall(wall, group)
 		if _, ok := s.latestPosts[group]; ok {
