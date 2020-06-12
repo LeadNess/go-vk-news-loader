@@ -22,6 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	groupsScreenNames,err := service.GetGroupsScreenNames(groupsPath)
 	if err != nil {
 		log.Fatal(err)

@@ -85,6 +85,7 @@ func (s *Storage) InsertPost(post Post) error {
 func (s *Storage) InsertPosts(posts []Post) error {
 	for _, post := range posts {
 		if err := s.InsertPost(post); err != nil {
+			fmt.Printf("error: %#v", post)
 			return err
 		}
 	}

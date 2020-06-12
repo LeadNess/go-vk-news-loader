@@ -75,21 +75,21 @@ func (s *NewsService) LoadNews(count int) error {
 	if err != nil {
 		return err
 	}
-	var updatedPosts []pg.Post
+	var updatedPosts, newPosts []pg.Post
 	for group, wall := range mapNews {
 		posts := ParseVKWall(wall, group)
 		if _, ok := s.latestPosts[group]; ok {
 			latestPost := s.latestPosts[group]
 			for i, post := range posts {
 				if post.ID == latestPost.ID {
-					posts = posts[:i]
+					newPosts = posts[:i]
 					updatedPosts = posts[i:]
 					break
 				}
 			}
 		}
 		s.latestPosts[group] = posts[0]
-		if err := s.db.InsertPosts(posts); err != nil {
+		if err := s.db.InsertPosts(newPosts); err != nil {
 			return err
 		}
 		if err := s.db.UpdatePosts(updatedPosts); err != nil {
