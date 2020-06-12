@@ -1,2 +1,2 @@
-package tests
+package test
 //Coming soon...

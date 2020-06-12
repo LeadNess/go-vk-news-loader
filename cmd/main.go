@@ -2,41 +2,34 @@ package main
 
 import (
 	"log"
-	"os"
-	"strconv"
 	"time"
 
 	"../pkg/service"
 )
 
-var (
-	vkToken      = os.Getenv("VK_TOKEN")
-	pgUser       = os.Getenv("PG_USER")
-	pgPassword   = os.Getenv("PG_PASSWORD")
-	pgHost       = os.Getenv("PG_HOST")
-	pgPort       = os.Getenv("PG_PORT")
-	pgDBName     = os.Getenv("PG_DBNAME")
-	timeInterval = os.Getenv("TIME_INTERVAL")
-	secondsCount int64
+const (
+	cfgPath    = "config/config.json"
+	groupsPath = "config/groups.json"
 )
 
 func main() {
-	newsService, err := service.NewNewsService(
-		vkToken, pgUser, pgPassword, pgHost, pgPort, pgDBName)
+	cfg, err := service.GetConfig(cfgPath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if secondsCount, err = strconv.ParseInt(timeInterval, 10, 64); err != nil {
-		log.Fatalf("error on parsing TIME_INTERVAL - %s", err)
+	newsService, err := service.NewNewsService(
+		cfg.VKToken, cfg.PGUser, cfg.PGPass, cfg.PGHost, cfg.PGPort, cfg.PGName)
+	if err != nil {
+		log.Fatal(err)
 	}
-	groupsScreenNames := []string{"meduzaproject", "ria", "kommersant_ru", "tj", "rbc"}
+	groupsScreenNames,err := service.GetGroupsScreenNames(groupsPath)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if err := newsService.InitDB(); err != nil {
 		log.Fatal(err)
 	}
 	if err := newsService.AddNewsSources(groupsScreenNames); err != nil {
-		log.Fatal(err)
-	}
-	if err := newsService.LoadNews(100); err != nil {
 		log.Fatal(err)
 	}
 	for {
@@ -45,6 +38,6 @@ func main() {
 		} else {
 			log.Printf("loaded some staff")
 		}
-		time.Sleep(time.Duration(secondsCount) * time.Second)
+		time.Sleep(time.Duration(cfg.Interval) * time.Second)
 	}
 }

@@ -1,6 +1,8 @@
 package service
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"time"
 
 	"database/sql"
@@ -8,6 +10,16 @@ import (
 	pg "../postgres"
 	vk "../vkapi"
 )
+
+type Config struct {
+	PGUser   string `json:"pguser"`
+	PGPass   string `json:"pgpass"`
+	PGName   string `json:"pgname"`
+	PGHost   string `json:"pghost"`
+	PGPort   string `json:"pgport"`
+	VKToken  string `json:"vktoken"`
+	Interval int    `json:"interval"`
+}
 
 func ParseVKGroup(vkGroup vk.VKGroup) pg.Group {
 	return pg.Group{
@@ -44,4 +56,24 @@ func ParseVKWall(vkWall vk.VKWall, groupScreenName string) []pg.Post {
 		}
 	}
 	return posts
+}
+
+func GetGroupsScreenNames(groupsPath string) ([]string, error) {
+	bytes, err := ioutil.ReadFile(groupsPath)
+	if err != nil {
+		return nil, err
+	}
+	var groupsScreenNames []string
+	err = json.Unmarshal(bytes, &groupsScreenNames)
+	return groupsScreenNames, err
+}
+
+func GetConfig(configPath string) (Config, error) {
+	var config Config
+	bytes, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		return config, err
+	}
+	err = json.Unmarshal(bytes, &config)
+	return config, err
 }
