@@ -1,8 +1,6 @@
 package service
 
 import (
-	"time"
-
 	"github.com/pkg/errors"
 
 	pg "../postgres"
@@ -20,7 +18,6 @@ type NewsLoader interface {
 type NewsService struct {
 	db          *pg.Storage
 	vkApi       *vk.VKAPi
-	lastUpdate  time.Time
 	latestPosts map[string]pg.Post
 }
 
@@ -71,6 +68,7 @@ func (s *NewsService) AddNewsSources(groupsScreenNames []string) error {
 
 func (s *NewsService) LoadNews(groupsDomains []string, count int) error {
 	mapNews, err := s.vkApi.GetGroupsPosts(groupsDomains, count)
+	var updatedPosts []pg.Post
 	if err != nil {
 		return err
 	}
@@ -81,12 +79,16 @@ func (s *NewsService) LoadNews(groupsDomains []string, count int) error {
 			for i, post := range posts {
 				if post.ID == latestPost.ID {
 					posts = posts[:i]
+					updatedPosts = posts[i:]
 					break
 				}
 			}
 		}
 		s.latestPosts[group] = posts[0]
 		if err := s.db.InsertPosts(posts); err != nil {
+			return err
+		}
+		if err := s.db.UpdatePosts(updatedPosts); err != nil {
 			return err
 		}
 	}
