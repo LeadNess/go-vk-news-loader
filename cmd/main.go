@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -29,7 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 	if err := newsService.InitDB(); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	if err := newsService.AddNewsSources(groupsScreenNames); err != nil {
 		log.Fatal(err)
@@ -38,7 +37,7 @@ func main() {
 		if err := newsService.LoadNews(100); err != nil {
 			log.Println(err)
 		} else {
-			fmt.Printf("\n")
+			log.Println()
 		}
 		time.Sleep(time.Duration(cfg.Interval) * time.Second)
 	}
