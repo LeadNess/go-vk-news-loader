@@ -42,8 +42,7 @@ func OpenConnection(user, password, host, port, dbName string) (*Storage, error)
 }
 
 func (s *Storage) CreateSchema() error {
-	res := s.db.MustExec(dbSchema)
-	_, err := res.RowsAffected()
+	_, err := s.db.Exec(dbSchema)
 	return err
 }
 
