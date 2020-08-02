@@ -4,8 +4,8 @@ import (
 	"github.com/pkg/errors"
 	"log"
 
-	pg "../postgres"
-	vk "../vkapi"
+	pg "github.com/LeadNess/go-vk-news-loader/pkg/postgres"
+	vk "github.com/LeadNess/go-vk-news-loader/pkg/vkapi"
 )
 
 var (

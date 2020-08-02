@@ -7,8 +7,8 @@ import (
 
 	"database/sql"
 
-	pg "../postgres"
-	vk "../vkapi"
+	pg "github.com/LeadNess/go-vk-news-loader/pkg/postgres"
+	vk "github.com/LeadNess/go-vk-news-loader/pkg/vkapi"
 )
 
 type Config struct {
