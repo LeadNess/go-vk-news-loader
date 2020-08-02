@@ -1,5 +1,7 @@
 # go-vk-news-loader
 
+[![Build Status](https://travis-ci.com/LeadNess/go-vk-news-loader.svg?branch=master)](https://travis-ci.com/LeadNess/go-vk-news-loader)
+
 ### Description
 
 Loads news from popular vk news groups into PostgreSQL DB.

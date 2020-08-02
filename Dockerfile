@@ -2,9 +2,7 @@ FROM golang:1.10 as builder
 
 WORKDIR /go/src/news-service
 COPY . .
-RUN go get -t github.com/jmoiron/sqlx \
- && go get -t github.com/lib/pq \
- && go get -t github.com/go-vk-api/vk \
+RUN go get -t github.com/LeadNess/go-vk-news-loader \
  && go build -ldflags "-linkmode external -extldflags -static" -a cmd/main.go
 
 FROM alpine:3.6 as alpine
