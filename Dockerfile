@@ -1,8 +1,8 @@
 FROM golang:1.10 as builder
 
-WORKDIR /go/src/news-service
+WORKDIR /go/src/github.com/LeadNess/go-vk-news-loader
 COPY . .
-RUN go get -t github.com/LeadNess/go-vk-news-loader \
+RUN go get -t .../ \
  && go build -ldflags "-linkmode external -extldflags -static" -a cmd/main.go
 
 FROM alpine:3.6 as alpine
