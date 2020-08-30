@@ -7,7 +7,7 @@ import (
 )
 
 const dbSchema = `
-CREATE TABLE groups (
+CREATE TABLE IF NOT EXISTS groups (
 	group_id INTEGER 
              PRIMARY KEY,
 
@@ -24,7 +24,7 @@ CREATE TABLE groups (
              CHECK (members_count >= 0)
 );
 
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
     post_id  INTEGER
              NOT NULL,
 

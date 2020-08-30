@@ -51,7 +51,11 @@ func (s *Storage) InsertGroup(group Group) error {
 		INSERT INTO 
 			groups (group_id, screen_name, name, members_count) 
 		VALUES 
-			(:group_id, :screen_name, :name, :members_count)`
+			(:group_id, :screen_name, :name, :members_count)
+		ON CONFLICT (group_id, screen_name)
+    		DO UPDATE SET
+    			name = :name,
+    			members_count = :members_count`
 	_, err := s.db.NamedExec(sql, &group)
 	return err
 }
@@ -76,7 +80,15 @@ func (s *Storage) InsertPost(post Post) error {
 		INSERT INTO 
 			posts (post_id, group_screen_name, date, title, text, likes_count, views_count, comments_count, reposts_count) 
 		VALUES 
-			(:post_id, :group_screen_name, :date, :title, :text, :likes_count, :views_count, :comments_count, :reposts_count)`
+			(:post_id, :group_screen_name, :date, :title, :text, :likes_count, :views_count, :comments_count, :reposts_count)
+		ON CONFLICT (post_id, date)
+		DO UPDATE SET
+			title = :title,
+			text = :text,
+			likes_count := likes_count,
+			views_count := views_count,
+			comments_count := comments_count,
+			reposts_count := reposts_count`
 	_, err := s.db.NamedExec(sql, &post)
 	return err
 }
