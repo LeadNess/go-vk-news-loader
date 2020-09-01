@@ -81,7 +81,7 @@ func (s *Storage) InsertPost(post Post) error {
 			posts (post_id, group_screen_name, date, title, text, likes_count, views_count, comments_count, reposts_count) 
 		VALUES 
 			(:post_id, :group_screen_name, :date, :title, :text, :likes_count, :views_count, :comments_count, :reposts_count)
-		ON CONFLICT (post_id)
+		ON CONFLICT (post_id, date)
 		DO UPDATE SET
 			title = :title,
 			text = :text,
