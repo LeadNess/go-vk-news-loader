@@ -52,7 +52,7 @@ func (s *Storage) InsertGroup(group Group) error {
 			groups (group_id, screen_name, name, members_count) 
 		VALUES 
 			(:group_id, :screen_name, :name, :members_count)
-		ON CONFLICT (group_id, screen_name)
+		ON CONFLICT (group_id)
     		DO UPDATE SET
     			name = :name,
     			members_count = :members_count`
@@ -81,7 +81,7 @@ func (s *Storage) InsertPost(post Post) error {
 			posts (post_id, group_screen_name, date, title, text, likes_count, views_count, comments_count, reposts_count) 
 		VALUES 
 			(:post_id, :group_screen_name, :date, :title, :text, :likes_count, :views_count, :comments_count, :reposts_count)
-		ON CONFLICT (post_id, date)
+		ON CONFLICT (post_id)
 		DO UPDATE SET
 			title = :title,
 			text = :text,
