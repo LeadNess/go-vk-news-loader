@@ -85,10 +85,10 @@ func (s *Storage) InsertPost(post Post) error {
 		DO UPDATE SET
 			title = :title,
 			text = :text,
-			likes_count := likes_count,
-			views_count := views_count,
-			comments_count := comments_count,
-			reposts_count := reposts_count`
+			likes_count = :likes_count,
+			views_count = :views_count,
+			comments_count = :comments_count,
+			reposts_count = :reposts_count`
 	_, err := s.db.NamedExec(sql, &post)
 	return err
 }
