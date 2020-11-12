@@ -1,6 +1,6 @@
 # go-vk-news-loader
 
-[![Build Status](https://travis-ci.com/LeadNess/go-vk-news-loader.svg?branch=master)](https://travis-ci.com/LeadNess/go-vk-news-loader)
+[![Build Status](https://travis-ci.com/vnkrtv/go-vk-news-loader.svg?branch=master)](https://travis-ci.com/vnkrtv/go-vk-news-loader)
 
 ### Description
 
@@ -9,7 +9,7 @@ Loads news from popular vk news groups into PostgreSQL DB.
 ### Installation
 
 - Install app:
-  - ```git clone https://github.com/LeadNess/go-vk-news-loader.git```
+  - ```git clone https://github.com/vnkrtv/go-vk-news-loader.git```
 - Set list of vk groups screen names in config/groups.json. Example of config/groups.json:
   -  ```["meduzaproject", "ria", "kommersant_ru", "tj", "rbc"]```
 - App settings (vk token and PostgreSQL connection information) stored in 'config/config.json' file. You can fill them yourself or by running 'configure_settings' script:

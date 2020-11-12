@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/LeadNess/go-vk-news-loader/pkg/service"
+	"github.com/vnkrtv/go-vk-news-loader/pkg/service"
 )
 
 const (

@@ -1,4 +1,4 @@
-module github.com/LeadNess/go-vk-news-loader
+module github.com/vnkrtv/go-vk-news-loader
 
 go 1.14
 
