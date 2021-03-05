@@ -30,10 +30,14 @@ func main() {
 	if err := newsService.InitDB(); err != nil {
 		log.Println(err)
 	}
-	if err := newsService.AddNewsSources(groupsScreenNames); err != nil {
+	if err := newsService.AddNewsGroups(groupsScreenNames); err != nil {
 		log.Fatal(err)
 	}
 	for {
+		if err := newsService.AddNewsGroups(groupsScreenNames); err != nil {
+			log.Fatal(err)
+		}
+		time.Sleep(time.Second)
 		if err := newsService.LoadNews(100); err != nil {
 			log.Println(err)
 		} else {

@@ -53,7 +53,7 @@ func (s *NewsService) AddNewsSource(groupScreenName string) error {
 	return s.db.InsertGroup(group)
 }
 
-func (s *NewsService) AddNewsSources(groupsScreenNames []string) error {
+func (s *NewsService) AddNewsGroups(groupsScreenNames []string) error {
 	vkGroups, err := s.vkApi.GetGroups(groupsScreenNames)
 	if err != nil {
 		return err
