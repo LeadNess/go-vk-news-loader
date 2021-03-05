@@ -61,6 +61,28 @@ CREATE TABLE IF NOT EXISTS posts (
 		REFERENCES groups (screen_name)
 			ON DELETE SET NULL
 			ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS entities (
+    post_id INTEGER
+			DEFAULT 0
+			NOT NULL,
+
+    type    TEXT
+            NOT NULL,
+	
+	date    TIMESTAMP
+            NOT NULL,
+
+    entity  TEXT
+			NOT NULL,
+
+	PRIMARY KEY (post_id, entity),
+
+	CONSTRAINT fk_posts FOREIGN KEY (post_id, date) 
+		REFERENCES posts (post_id, date)
+			ON DELETE SET DEFAULT
+			ON UPDATE CASCADE	
 );`
 
 type Group struct {
