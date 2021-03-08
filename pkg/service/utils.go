@@ -1,11 +1,13 @@
 package service
 
 import (
+	"database/sql"
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"strconv"
+	"strings"
 	"time"
-
-	"database/sql"
 
 	pg "github.com/vnkrtv/go-vk-news-loader/pkg/postgres"
 	vk "github.com/vnkrtv/go-vk-news-loader/pkg/vkapi"
@@ -68,12 +70,25 @@ func GetGroupsScreenNames(groupsPath string) ([]string, error) {
 	return groupsScreenNames, err
 }
 
-func GetConfig(configPath string) (Config, error) {
-	var config Config
-	bytes, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		return config, err
+func GetConfig() (Config, error) {
+	envVars := make(map[string]string)
+	for _, env := range os.Environ() {
+		if i := strings.Index(env, "="); i >= 0 {
+			envVars[env[:i]] = env[i+1:]
+		}
 	}
-	err = json.Unmarshal(bytes, &config)
+	interval, err := strconv.ParseInt(envVars["DATA_LOAD_INTERVAL"], 10, 64)
+	if err != nil {
+		return Config{}, err
+	}
+	config := Config{
+		PGUser:   envVars["PG_USER"],
+		PGPass:   envVars["PG_PASS"],
+		PGName:   envVars["PG_NAME"],
+		PGHost:   envVars["PG_HOST"],
+		PGPort:   envVars["PG_PORT"],
+		VKToken:  envVars["VK_TOKEN"],
+		Interval: int(interval),
+	}
 	return config, err
 }

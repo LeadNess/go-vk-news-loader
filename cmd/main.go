@@ -8,12 +8,11 @@ import (
 )
 
 const (
-	cfgPath    = "config/config.json"
 	groupsPath = "config/groups.json"
 )
 
 func main() {
-	cfg, err := service.GetConfig(cfgPath)
+	cfg, err := service.GetConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
